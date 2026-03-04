@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NAO ANALYSIS TERMINAL v3.2 Professional</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --panel-bg: rgba(255, 255, 255, 0.05);
+            --accent-cyan: #00d2ff;
+            --accent-blue: #0072ff;
+            --accent-red: #ff4d4d;
+            --text-main: #f0f0f5;
+            --text-dim: #a0a0a8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gold: #d4af37;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 30px;
+        }
+
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+
+        .panel {
+            margin: 15px;
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(15px);
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin: 0 0 15px 0;
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        input[type="number"],
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'JetBrains Mono';
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-command {
+            background: #1a1a1c;
+            border: 1px solid #333;
+            color: #888;
+            padding: 12px 5px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 44px;
+        }
+
+        .btn-command.active {
+            background: linear-gradient(135deg, var(--accent-blue), #00d2ff);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-command.active.negative {
+            background: linear-gradient(135deg, #ff4d4d, #b30000);
+            box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+        }
+
+        .result-box {
+            background: rgba(0, 114, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .value-display {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            color: var(--accent-cyan);
+        }
+
+        .value-display .unit {
+            font-size: 1rem;
+            margin-left: 5px;
+        }
+
+        .decoder-table {
+            width: 100%;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 25px 35px 2fr 1.5fr 1.5fr;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .decoder-row {
+            display: grid;
+            grid-template-columns: 25px 35px 2fr 1.5fr 1.5fr;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .btn-inc {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: #333;
+            color: white;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #settings-view,
+        #help-view,
+        #config-help-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            z-index: 1000;
+            padding: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-list {
+            padding: 10px 20px;
+        }
+
+        .config-item {
+            display: grid;
+            grid-template-columns: 1fr 75px 45px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            gap: 5px;
+        }
+
+        .weight-ctrl {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #444;
+            border-radius: 12px;
+            position: relative;
+            transition: 0.3s;
+            justify-self: center;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+        }
+
+        .toggle-switch div {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active div {
+            left: 23px;
+        }
+
+        .factory-reset {
+            margin: 40px auto;
+            padding: 15px;
+            background: transparent;
+            border: 2px solid #ff4d4d;
+            color: #ff4d4d;
+            font-weight: bold;
+            border-radius: 8px;
+            width: calc(100% - 40px);
+        }
+
+        .bankroll-btn-box {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .btn-small-adj {
+            background: #222;
+            border: 1px solid #333;
+            color: #aaa;
+            font-size: 0.6rem;
+            padding: 6px 0;
+            border-radius: 4px;
+        }
+
+        .help-content {
+            padding: 20px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .help-content h3 {
+            color: var(--accent-cyan);
+            font-size: 1rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .help-content b {
+            color: white;
+        }
+
+        #btn-auth {
+            margin-top: 20px;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        #btn-auth:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            border: 2px solid #333;
+            border-top: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 認証用オーバーレイ -->
+    <div id="auth-overlay">
+        <div class="logo" style="margin-bottom:30px; font-size:1.2rem;">NAO ANALYSIS ROOM</div>
+        <div style="width:100%; max-width:300px;">
+            <label style="font-size:0.8rem; margin-bottom:15px; color:#888;">MEMBERSHIP KEY 入力</label>
+            <input type="password" id="auth-key" placeholder="••••••••" style="text-align:center; letter-spacing:4px;">
+            <button id="btn-auth">START ANALYZE</button>
+            <div id="auth-loading" class="hidden" style="margin-top:20px; font-size:0.8rem; color:var(--accent-cyan);">
+                <div class="loader"></div> LICENSE CHECKING...
+            </div>
+            <p id="auth-error" style="color:var(--accent-red); font-size:0.7rem; margin-top:15px;" class="hidden">
+                認証キーが正しくありません。</p>
+        </div>
+        <p style="position:absolute; bottom:40px; font-size:0.6rem; color:#444;">Licensed for Professional Use Only</p>
+    </div>
+
+    <div id="app" class="hidden">
+        <header>
+            <div class="logo">NAO ANALYSIS ROOM</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button id="help-btn"
+                    style="background:none; border:none; font-size:1.1rem; cursor:pointer; opacity:0.7;">❓</button>
+                <button id="settings-btn"
+                    style="background:none; border:none; font-size:1.2rem; cursor:pointer;">⚙️</button>
+            </div>
+        </header>
+
+        <div id="main-view">
+            <div class="panel">
+                <h2 class="section-title">I. IN-NIGE ANALYZER</h2>
+                <div class="input-group">
+                    <label>年間イン逃げ率 (%) <span style="font-size:0.6rem; color:#666;">※全国平均約55%</span></label>
+                    <input type="number" id="base-p1" step="0.1" value="55.0">
+                </div>
+                <div id="in-nige-commands" class="command-grid"></div>
+                <div class="result-box">
+                    <label>推定・イン逃げ率 (P1)</label>
+                    <div class="value-display"><span id="p1-value">55</span><span class="unit">%</span></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="section-title">II. 1-X DECODER</h2>
+                <div class="decoder-table">
+                    <div class="table-header">
+                        <span>艇</span><span>平均</span><span>補正</span><span>確率</span><span>ボーダー</span>
+                    </div>
+                    <div id="decoder-rows"></div>
+                </div>
+            </div>
+
+            <div class="panel" style="padding: 15px;">
+                <h2 class="section-title">III. BANKROLL MANAGER</h2>
+                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:15px; align-items: start;">
+                    <div>
+                        <label style="margin-bottom:4px;">総運用資産 (Capital)</label>
+                        <input type="number" id="capital" value="100000" step="1000"
+                            style="padding:8px; font-size:1.1rem; color:var(--accent-cyan);">
+                        <div class="bankroll-btn-box">
+                            <button class="btn-small-adj" onclick="NaoAPI.adjCap(-10000)">-1万</button>
+                            <button class="btn-small-adj" onclick="NaoAPI.adjCap(-1000)">-1k</button>
+                            <button class="btn-small-adj" onclick="NaoAPI.adjCap(1000)">+1k</button>
+                            <button class="btn-small-adj" onclick="NaoAPI.adjCap(10000)">+1万</button>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <label style="margin-bottom:4px;">基準 1U (1%)</label>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--gold); margin-top:5px;">¥<span
+                                id="unit-val">1,000</span></div>
+                        <p style="font-size:0.55rem; color:#555; margin-top:8px;">※オッズと期待値を考慮し<br>独自のベッティング戦略を検討してください。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-view" class="hidden">
+            <header>
+                <button id="back-btn"
+                    style="background:none; border:none; color:var(--accent-cyan); font-weight:bold; cursor:pointer; padding:20px;">←
+                    BACK</button>
+                <h2 style="margin:0; font-size:0.9rem;">TACTICAL CONFIG</h2>
+                <button id="settings-help-btn"
+                    style="background:none; border:none; font-size:1.1rem; cursor:pointer; opacity:0.7; padding:20px;">❓</button>
+            </header>
+            <div id="slot-config" class="config-list"></div>
+            <button class="factory-reset" id="reset-btn">FACTORY RESET (全初期化)</button>
+        </div>
+
+        <div id="help-view" class="hidden">
+            <header>
+                <button id="help-back-btn"
+                    style="background:none; border:none; color:var(--accent-cyan); font-weight:bold; cursor:pointer; padding:20px;">←
+                    CLOSE</button>
+                <h2 style="margin:0; font-size:0.9rem;">HELP & LOGIC</h2>
+                <div style="width:60px;"></div>
+            </header>
+            <div class="help-content">
+                <h3>1. イン逃げ解析 (P1)</h3>
+                <p><b>年間イン逃げ率</b>をベースに、現地の鑑定因子を加減算して、そのレース独自の「推定逃げ率(P1)」を算出します。</p>
+                <h3>2. 1-X デコーダー</h3>
+                <p>P1に対し2〜6号艇の<b>平均頻度</b>を掛け合わせ的中確率を算出。現場気配に応じ補正してください。</p>
+                <h3>3. 期待値ボーダー</h3>
+                <p>的中確率から逆算した「1.3倍の期待値」が得られる目標オッズです。</p>
+                <h3>4. 資金管理 (1U)</h3>
+                <p>総資産の1%を<b>1ユニット(1U)</b>として算出。100円未満を切り捨てて表示します。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const ACCESS_KEY = "NAO7070";
+            const STANDALONE_AVG_IN_NIGE = 55.0;
+            const SKEY = 'NAO_V32_PROFESSIONAL';
+            const AUTH_KEY = 'NAO_AUTH_VERIFIED';
+
+            const DEFAULT_CONFIG = {
+                commands: [
+                    { id: 'p1', label: 'ST順位1位', weight: 5, active: true },
+                    { id: 'p2', label: '展示タイム差0.10↑', weight: 4, active: true },
+                    { id: 'p3', label: '展示順位2位内', weight: 2, active: false },
+                    { id: 'p4', label: 'モーター2連40%↑', weight: 4, active: true },
+                    { id: 'p5', label: '周回タイム1位', weight: 3, active: true },
+                    { id: 'p6', label: '総合的機力優位', weight: 3, active: false },
+                    { id: 'p7', label: '1号艇差れ率10%↓', weight: 4, active: true },
+                    { id: 'p8', label: '1号艇捲れ率10%↓', weight: 4, active: false },
+                    { id: 'p9', label: '3ST＞4ST(壁)', weight: 3, active: false },
+                    { id: 'p10', label: '地元・水面理解度高', weight: 3, active: false },
+                    { id: 'p11', label: '調整枠：＋', weight: 3, active: false },
+                    { id: 'm1', label: 'ST順位4位以下', weight: -5, active: true },
+                    { id: 'm2', label: '展示順位4位以下', weight: -4, active: true },
+                    { id: 'm3', label: 'モーター2連30%↓', weight: -4, active: true },
+                    { id: 'm4', label: '2/3号艇に格上', weight: -3, active: false },
+                    { id: 'm5', label: '2/3F持/ST不安', weight: -5, active: false },
+                    { id: 'm6', label: '強風・荒天', weight: -3, active: false },
+                    { id: 'm7', label: 'カド展示差-0.15', weight: -5, active: true },
+                    { id: 'm8', label: '前付/進入深', weight: -4, active: false },
+                    { id: 'm9', label: '周回4位以下', weight: -3, active: true },
+                    { id: 'm10', label: 'Ｆ持・ＳＴ遅れ', weight: -4, active: false },
+                    { id: 'm11', label: '調整枠：ー', weight: -4, active: false }
+                ],
+                decoder: [
+                    { boat: 2, avg: 18.2 }, { boat: 3, avg: 13.5 },
+                    { boat: 4, avg: 10.4 }, { boat: 5, avg: 6.4 }, { boat: 6, avg: 4.5 }
+                ]
+            };
+
+            let data = {
+                config: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
+                state: { activeIds: [], mods: [0, 0, 0, 0, 0], baseP1: 55.0, capital: 100000 }
+            };
+
+            function init() {
+                if (localStorage.getItem(AUTH_KEY) === ACCESS_KEY) {
+                    unlockApp();
+                }
+
+                document.getElementById('btn-auth').onclick = () => {
+                    const k = document.getElementById('auth-key').value;
+                    if (k === ACCESS_KEY) {
+                        // 演出開始
+                        document.getElementById('btn-auth').disabled = true;
+                        document.getElementById('auth-error').classList.add('hidden');
+                        document.getElementById('auth-loading').classList.remove('hidden');
+
+                        setTimeout(() => {
+                            localStorage.setItem(AUTH_KEY, ACCESS_KEY);
+                            unlockApp();
+                        }, 3000); // 3秒の「システム照合」演出
+                    } else {
+                        document.getElementById('auth-error').classList.remove('hidden');
+                    }
+                };
+
+                const saved = localStorage.getItem(SKEY);
+                if (saved) {
+                    try {
+                        const p = JSON.parse(saved);
+                        data.state = Object.assign(data.state, p.state);
+                        p.config.commands.forEach(savedCmd => {
+                            const target = data.config.commands.find(c => c.id === savedCmd.id);
+                            if (target) {
+                                target.active = savedCmd.active;
+                                target.weight = savedCmd.weight;
+                                target.label = savedCmd.label;
+                            }
+                        });
+                    } catch (e) { }
+                }
+
+                document.getElementById('capital').value = data.state.capital;
+                document.getElementById('base-p1').value = data.state.baseP1;
+                document.getElementById('capital').oninput = (e) => { data.state.capital = parseFloat(e.target.value) || 0; update(); };
+                document.getElementById('base-p1').oninput = (e) => { data.state.baseP1 = parseFloat(e.target.value) || 0; update(); };
+                document.getElementById('settings-btn').onclick = () => showView('settings-view');
+                document.getElementById('help-btn').onclick = () => showView('help-view');
+                document.getElementById('back-btn').onclick = () => hideView('settings-view');
+                document.getElementById('help-back-btn').onclick = () => hideView('help-view');
+                document.getElementById('reset-btn').onclick = () => { if (confirm("全リセットしますか？")) { localStorage.removeItem(SKEY); location.reload(); } };
+                update();
+            }
+
+            function unlockApp() {
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            }
+
+            function showView(id) { document.getElementById(id).classList.remove('hidden'); }
+            function hideView(id) { document.getElementById(id).classList.add('hidden'); update(); }
+            function update() { save(); renderCommands(); renderDecoder(); calc(); renderConfig(); }
+            function save() { localStorage.setItem(SKEY, JSON.stringify(data)); }
+
+            function renderCommands() {
+                const con = document.getElementById('in-nige-commands'); con.innerHTML = '';
+                data.config.commands.filter(c => c.active).forEach(cmd => {
+                    const b = document.createElement('button');
+                    const isActive = data.state.activeIds.includes(cmd.id);
+                    b.className = 'btn-command' + (isActive ? ' active' : '') + (isActive && cmd.weight < 0 ? ' negative' : '');
+                    b.innerText = cmd.label;
+                    b.onclick = () => {
+                        if (isActive) data.state.activeIds = data.state.activeIds.filter(i => i !== cmd.id);
+                        else data.state.activeIds.push(cmd.id);
+                        update();
+                    };
+                    con.appendChild(b);
+                });
+            }
+
+            function renderDecoder() {
+                const con = document.getElementById('decoder-rows'); con.innerHTML = '';
+                data.config.decoder.forEach((d, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'decoder-row';
+                    row.innerHTML = `<span style="font-weight:700; color:var(--accent-cyan); font-family:monospace;">${d.boat}</span><span style="font-size:0.65rem; color:#888;">${d.avg}%</span><div class="weight-ctrl"><button class="btn-inc" onclick="NaoAPI.mod(${i},-1)">-</button><span style="min-width:26px;">${data.state.mods[i] || 0}</span><button class="btn-inc" onclick="NaoAPI.mod(${i},1)">+</button></div><span id="p-res-${i}">0%</span><span id="b-res-${i}" style="color:var(--gold); font-weight:700;">-</span>`;
+                    con.appendChild(row);
+                });
+            }
+
+            function calc() {
+                let p1 = data.state.baseP1;
+                data.state.activeIds.forEach(id => { const c = data.config.commands.find(x => x.id === id); if (c) p1 += parseFloat(c.weight); });
+                p1 = Math.max(0, Math.min(100, p1));
+                document.getElementById('p1-value').innerText = p1.toFixed(1);
+                const scale = p1 / STANDALONE_AVG_IN_NIGE;
+                data.config.decoder.forEach((d, i) => {
+                    const prob = (d.avg + (data.state.mods[i] || 0)) * scale;
+                    document.getElementById(`p-res-${i}`).innerText = prob.toFixed(1) + '%';
+                    const border = prob > 0 ? (1.3 / (prob / 100)).toFixed(1) : '-';
+                    document.getElementById(`b-res-${i}`).innerText = border + (border === '-' ? '' : '倍');
+                });
+                document.getElementById('unit-val').innerText = (Math.floor(data.state.capital / 100 / 100) * 100).toLocaleString();
+            }
+
+            function renderConfig() {
+                const con = document.getElementById('slot-config'); con.innerHTML = '';
+                data.config.commands.forEach((cmd) => {
+                    const row = document.createElement('div');
+                    row.className = 'config-item';
+                    row.innerHTML = `<div onclick="NaoAPI.editLabel('${cmd.id}')" style="cursor:pointer;"><div style="font-weight:700; font-size:0.85rem; color:${cmd.weight < 0 ? 'var(--accent-red)' : '#fff'};">${cmd.label}</div><div style="font-size:0.5rem; color:var(--accent-cyan); opacity:0.6;">タップして編集</div></div><div class="weight-ctrl"><button class="btn-inc" onclick="NaoAPI.weight('${cmd.id}',-1)">-</button><span style="min-width:28px; text-align:center; color:var(--accent-cyan); font-weight:bold;">${cmd.weight}</span><button class="btn-inc" onclick="NaoAPI.weight('${cmd.id}',1)">+</button></div><div class="toggle-switch ${cmd.active ? 'active' : ''}" onclick="NaoAPI.toggle('${cmd.id}')"><div></div></div>`;
+                    con.appendChild(row);
+                });
+            }
+
+            window.NaoAPI = {
+                mod: (i, v) => { data.state.mods[i] = (data.state.mods[i] || 0) + v; update(); },
+                weight: (id, v) => { const c = data.config.commands.find(x => x.id === id); if (c) { c.weight = (parseFloat(c.weight) || 0) + v; update(); } },
+                toggle: (id) => { const c = data.config.commands.find(x => x.id === id); const count = data.config.commands.filter(x => x.active).length; if (!c.active && count >= 10) { alert("上限10スロットです"); return; } c.active = !c.active; update(); },
+                editLabel: (id) => { const c = data.config.commands.find(x => x.id === id); if (c) { const n = prompt("名前変更", c.label); if (n && n.trim() !== "") { c.label = n.trim().substring(0, 15); update(); } } },
+                adjCap: (v) => { data.state.capital = Math.max(0, data.state.capital + v); document.getElementById('capital').value = data.state.capital; update(); }
+            };
+            init();
+        })();
+    </script>
+</body>
+
+</html>

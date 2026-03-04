@@ -398,7 +398,8 @@
             <div class="panel">
                 <h2 class="section-title">I. IN-NIGE ANALYZER</h2>
                 <div class="input-group">
-                    <label>年間イン逃げ率 (%) <span style="font-size:0.6rem; color:#666;">※全国平均約55%</span></label>
+                    <label>年間イン逃げ率 (%) <span style="font-size:0.6rem; color:#666;">※全国平均約55%</span><br><span
+                            style="font-size:0.6rem; color:var(--accent-cyan);">※1号艇選手の個人成績を入力してください</span></label>
                     <input type="number" id="base-p1" step="0.1" value="55.0">
                 </div>
                 <div id="in-nige-commands" class="command-grid"></div>
@@ -466,7 +467,7 @@
             </header>
             <div class="help-content">
                 <h3>1. イン逃げ解析 (P1)</h3>
-                <p><b>年間イン逃げ率</b>をベースに、現地の鑑定因子を加減算して、そのレース独自の「推定逃げ率(P1)」を算出します。</p>
+                <p><b>当該レース1号艇選手の年間イン逃げ率</b>をベースに、現地の鑑定因子を加減算して、そのレース独自の「推定逃げ率(P1)」を算出します。</p>
 
                 <h3>2. 1-X デコーダー</h3>
                 <p>P1に対し2〜6号艇の<b>平均頻度</b>を掛け合わせ的中確率を算出。現場気配に応じ補正してください。</p>
@@ -502,7 +503,7 @@
                 <ul style="font-size: 0.75rem; color: #ccc; padding-left: 20px; line-height: 1.8; margin-top:15px;">
                     <li><b>項目の変更（リネーム）</b>: <br>各項目の「名称」をタップすることで、独自の鑑定要因に変更できます。</li>
                     <li><b>重み（Weight）の調整</b>: <br>右側の数値をタップして、その因子がイン逃げ率に与える影響度（±1〜10）を個別に設定します。</li>
-                    <li><b>表示項目の選定</b>: <br>チェックボックスをオンにした項目がメイン画面にボタンとして一覧表示されます（プラス・マイナス各最大10項目）。</li>
+                    <li><b>表示項目の選定</b>: <br>チェックボックスをオンにした項目が、メイン画面に表示されます（すべての因子を合計して最大10項目まで選択可能です）。</li>
                     <li><b>設定の初期化（FACTORY RESET）</b>: <br>カスタムした設定内容をすべて消去し、初期状態に戻します。</li>
                 </ul>
                 <p style="font-size:0.65rem; color:#888; margin-top:20px;">※設定内容はブラウザに自動保存されます。</p>

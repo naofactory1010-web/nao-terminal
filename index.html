@@ -573,6 +573,7 @@
                 document.getElementById('base-p1').oninput = (e) => { data.state.baseP1 = parseFloat(e.target.value) || 0; update(); };
                 document.getElementById('settings-btn').onclick = () => showView('settings-view');
                 document.getElementById('help-btn').onclick = () => showView('help-view');
+                document.getElementById('settings-help-btn').onclick = () => showView('help-view');
                 document.getElementById('back-btn').onclick = () => hideView('settings-view');
                 document.getElementById('help-back-btn').onclick = () => hideView('help-view');
                 document.getElementById('reset-btn').onclick = () => { if (confirm("全リセットしますか？")) { localStorage.removeItem(SKEY); location.reload(); } };

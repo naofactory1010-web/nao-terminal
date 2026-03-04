@@ -467,6 +467,14 @@
             <div class="help-content">
                 <h3>1. イン逃げ解析 (P1)</h3>
                 <p><b>年間イン逃げ率</b>をベースに、現地の鑑定因子を加減算して、そのレース独自の「推定逃げ率(P1)」を算出します。</p>
+
+                <div
+                    style="background:#111; padding:10px; border-radius:4px; margin:15px 0; font-size:0.7rem; border-left:3px solid var(--accent-cyan);">
+                    <p style="margin:0; color:var(--accent-cyan); font-weight:bold;">TACTICAL TIP:</p>
+                    <p style="margin:5px 0 0 0; line-height:1.4;">
+                        ST順位1位、展示タイム差0.10↑などはイン逃げの強力な裏付けとなります。逆にST遅れやワースト級の機力は致命的なマイナス因子です。</p>
+                </div>
+
                 <h3>2. 1-X デコーダー</h3>
                 <p>P1に対し2〜6号艇の<b>平均頻度</b>を掛け合わせ的中確率を算出。現場気配に応じ補正してください。</p>
                 <h3>3. 期待値ボーダー</h3>
@@ -490,42 +498,19 @@
                 <button id="config-help-back-btn"
                     style="background:none; border:none; color:var(--accent-cyan); font-weight:bold; cursor:pointer; padding:20px;">←
                     CLOSE</button>
-                <h2 style="margin:0; font-size:0.9rem;">TACTICAL GUIDE</h2>
+                <h2 style="margin:0; font-size:0.9rem;">CONFIG MANUAL</h2>
                 <div style="width:60px;"></div>
             </header>
             <div class="help-content">
-                <h3>鑑定項目の根拠と指針 (v3.2)</h3>
-
-                <h4
-                    style="color:var(--accent-cyan); border-bottom:1px solid #333; padding-bottom:5px; margin-top:20px;">
-                    PLUS ELEMENTS</h4>
-                <ul style="font-size: 0.75rem; color: #ccc; padding-left: 20px; line-height: 1.6;">
-                    <li><b>ST順位1位</b>: スタートの相対的優位。1M先取りの絶対条件。</li>
-                    <li><b>展示タイム差</b>: 直線系統の機力。0.10秒以上の差は逆転困難な壁。</li>
-                    <li><b>実力上位/A1級</b>: レーサー格差。捌きの技術と判断力の差。</li>
-                    <li><b>モーター2連40%↑</b>: 調整で化ける可能性を秘めた機力のポテンシャル。</li>
-                    <li><b>2号艇 壁性能高</b>: 2枚目の盾。外からの攻めを封殺する必須要素。</li>
-                    <li><b>逃げ率70%超</b>: 1コースの絶対的な信頼度。勝負の土台。</li>
+                <h3>設定画面の操作方法</h3>
+                <ul style="font-size: 0.75rem; color: #ccc; padding-left: 20px; line-height: 1.8; margin-top:15px;">
+                    <li><b>項目のリネーム</b>: <br>各項目の「名前」をタップすると、現場で使いやすい名称に自由に書き換えられます。</li>
+                    <li><b>重み(Weight)の調整</b>: <br>右側の「数値」をタップして数値を入力。その項目がイン逃げ率に与える影響力を調整します（±1〜10）。</li>
+                    <li><b>有効・無効の切り替え</b>: <br>チェックボックスをオンにすると、メイン画面にボタンとして表示されます。プラス・マイナス各最大10項目を選択可能です。</li>
+                    <li><b>設定の初期化</b>: <br>一番下の「FACTORY RESET」ボタンで、すべてのカスタム設定を消去し、工場出荷状態に戻します。</li>
                 </ul>
-
-                <h4 style="color:#ff5555; border-bottom:1px solid #333; padding-bottom:5px; margin-top:20px;">MINUS
-                    ELEMENTS</h4>
-                <ul style="font-size: 0.75rem; color: #ccc; padding-left: 20px; line-height: 1.6;">
-                    <li><b>ST順位4位降</b>: 遅れ・凹み。1Mで飲み込まれる致命的リスク。</li>
-                    <li><b>展示順位4位降</b>: 機力劣勢。出足・伸びともに不安が残る状態。</li>
-                    <li><b>ワースト級足色</b>: 基本スペックの欠如。展示以前の問題。</li>
-                    <li><b>2/3号艇に格上</b>: 内側からのプレッシャー。スタート・旋回ともに後手に。</li>
-                    <li><b>F持ち/ST不安</b>: 壁崩壊。3・4号艇の自在な攻めを許す隙。</li>
-                    <li><b>荒天・強風</b>: 水面の乱れ。インの旋回が流れやすく逆転劇の伏線。</li>
-                </ul>
-
-                <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; text-align: center;">
-                    <p style="font-size: 0.65rem; color: #888; margin-bottom: 15px;">全項目の重み付けの詳細と「期待値防衛」の極意はバイブルにて。</p>
-                    <a href="https://note.com/nao_boatrace1010" target="_blank"
-                        style="display: block; background: #333; color: var(--gold); text-decoration: none; font-weight: bold; padding: 10px; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--gold);">
-                        解説noteで詳しく学ぶ
-                    </a>
-                </div>
+                <p style="font-size:0.65rem; color:#888; margin-top:20px;">※設定内容はブラウザ(localStorage)に自動保存され、次回起動時も維持されます。
+                </p>
             </div>
         </div>
     </div>
